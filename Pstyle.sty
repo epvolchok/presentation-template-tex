@@ -1,0 +1,309 @@
+\ProvidesPackage{Pstyle}
+%Copyright (c) 2024 VOLCHOK Evgeniia
+
+%Licensed under the Apache License, Version 2.0 (the "License");
+%you may not use this file except in compliance with the License.
+%You may obtain a copy of the License at
+
+%http://www.apache.org/licenses/LICENSE-2.0
+
+\usepackage{xparse} 
+\usepackage{xcolor}
+%font
+\setmainfont{tahoma.ttf}
+%switching off navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+%COLORS
+\definecolor{maingreen}{RGB}{0, 85, 34}
+\definecolor{lightblue}{RGB}{144, 180, 255}
+\definecolor{lightgreen}{RGB}{44, 160, 44}
+\definecolor{orangec}{RGB}{168, 12, 145}
+
+\usepackage{pgfkeys}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%HELPFUL FUNCTIONS
+% a flag for displaying (or not) logo on a colored strip
+\newcommand{\setvalue}[1]{\pgfkeys{/variables/#1}}
+\newcommand{\getvalue}[1]{\pgfkeysvalueof{/variables/#1}}
+\newcommand{\declare}[1]{%
+	\pgfkeys{
+		/variables/#1.is family,
+		/variables/#1.unknown/.style = {\pgfkeyscurrentpath/\pgfkeyscurrentname/.initial = ##1}
+	}%
+}
+
+\declare{flag/}
+\setvalue{flag/property = 0}
+
+%colored strip in footline and headline
+%arguments: 
+% #1 top color, #2 bottom color - to create a gradient
+% #3 width of the strip, #4 height of the strip
+% #5 - coordinates of lower left corner in the format [xshift=-0.03, yshift=0.17cm] current page.south
+% #6 a possition of a logo in the format 'below right =-0.4 cm and 0 cm of myrect.north west', necessary if flag/property=1
+% #7 height of the logo
+
+\NewDocumentCommand{\ColoredRectangle}{m m m m m  g g} %mO{Flag}O{Image height}{
+{	\begin{tikzpicture}[remember picture,overlay]
+	\node[draw, top color=#1,bottom color=#2,minimum width=#3, minimum height=#4] (myrect) at (#5) {};
+	%logo
+	\ifnum\getvalue{flag/property}=1
+		\node [#6]
+		{
+			\includegraphics[height=#7]{./titlefigures/logo.png}
+		};
+		\setvalue{flag/property = 0}
+	\fi
+	\end{tikzpicture}
+}
+
+%number of a frame
+\NewDocumentCommand{\FrameNumber}{}
+{
+	\begin{tikzpicture}[remember picture,overlay]
+		%colored strip
+		
+		%current frame number / total frame number
+		\node [above =-0.1 cm of current page.south east]
+		{
+			\begin{minipage}{0.2\linewidth}
+				\insertframenumber{} / \inserttotalframenumber
+			\end{minipage}
+		};
+		
+	\end{tikzpicture}
+}
+%frame title
+\NewDocumentCommand{\DisplayFrameTitle}{m}
+{\begin{tikzpicture}[remember picture,overlay]
+	\node [below  =0.4 cm of current page.north]
+	{
+		\begin{minipage}{0.8\linewidth}
+			\textcolor{#1}{\LARGE\insertframetitle}
+		\end{minipage}
+	};
+\end{tikzpicture}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%TITLE PAGE
+\setbeamertemplate{title page}
+{
+	\begin{tikzpicture}[remember picture,overlay]
+		%presentation title
+		\node  [below right=1.5cm and 3cm of current page.north west] (titles) 
+		{
+			\begin{minipage}{0.5\linewidth}
+				
+				\textcolor{white}{\textbf{\large\MakeUppercase\inserttitle}}
+			\end{minipage}
+		};
+		
+		%presentation subtitle
+		\node [below =0.6cm of titles.west, anchor=west] (subtitles)
+		{
+			\begin{minipage}{0.5\linewidth}
+				\textcolor{white}{\textbf{\large\MakeUppercase\insertsubtitle}}
+			\end{minipage}
+		};
+		
+		%authors list
+		\node [above left=3cm and 1 cm of  current page.south east] (authors)
+		{
+			\begin{minipage}{0.6\linewidth}
+				\centering
+				%counter for a \foreach cycle
+				\newcounter{authorcount} 
+				\setcounter{authorcount}{0}
+				%total number of authors
+				\newcounter{total} 
+				\setcounter{total}{0}
+				
+				\def\breakloop{\fi\iffalse}
+				
+				\foreach \author in \insertauthorslist
+				{
+					\addtocounter{total}{1}
+				}
+				\foreach \author in \insertauthorslist{%
+						%increase couner
+						\addtocounter{authorcount}{1}%
+						%if total number <4 display them all
+						\ifnum\value{authorcount}<4\relax%
+							\ifnum\value{authorcount}=\value{total}
+							\textcolor{maingreen}{\,\Large\author}%
+							\else
+							\textcolor{maingreen}{\,\Large\author,}%
+							\fi
+						%if total number > 3 print et al. after the third author
+						\else
+							\def\author{}%
+						\fi
+						\unskip%
+				}
+				\ifnum\value{total}>3
+				\textcolor{maingreen}{\textit{et al.}}
+				\fi
+				
+			\end{minipage}
+		};
+		%affilations
+		\node [below= 0. cm of authors.south] (institute)
+		{
+			
+			\begin{minipage}{0.6\linewidth}
+				%every affilation is displayed on a new line as a list
+				%but not more than 3
+				\begin{itemize}[label=\textcolor{maingreen}{$\bullet$}, nosep]
+					\centering
+					\newcounter{instcount} 
+					\setcounter{instcount}{0}
+					\foreach \inst in \insertsplitinstitutes { 
+						\addtocounter{instcount}{1}
+						\ifnum\value{instcount}<4
+						\item \textcolor{maingreen}{\inst}
+						\else
+						\break
+						\fi
+						
+					}
+				\end{itemize}
+				
+			\end{minipage}
+			
+		};
+		%title figure with some logos, etc
+		\node [above=0.cm of current page.south] (titlegraphic)
+		{
+			\begin{minipage}{\linewidth}
+				\centering
+				\hspace{0.9cm}\includegraphics[width=0.7\linewidth]{./titlefigures/logos.pdf}
+			\end{minipage}
+		};
+		
+		
+	\end{tikzpicture}
+}
+
+%BACKGROUND FOR TITLE PAGE
+\newcommand{\FirstFrame}{
+	\usebackgroundtemplate{\includegraphics[width=\paperwidth, height=\paperheight]{./titlefigures/title_back_green.png}}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%STYLE ONE
+\newcommand{\FrameStyleOne}{
+	% frame title
+	\setbeamertemplate{frametitle}{
+		
+		\DisplayFrameTitle{maingreen}
+	}
+	%footline style
+	\setbeamertemplate{footline}{
+		\leavevmode%
+
+		\setvalue{flag/property = 1}
+		\ColoredRectangle{maingreen}{black}{\textwidth+0.15cm}{0.47cm}{[xshift=-0.03, yshift=0.17cm] current page.south}{below right =-0.3 cm and 0 cm of myrect.north west}{0.35cm}
+		
+		\FrameNumber{}
+	}
+	%setups for footline fonts
+	%headline fonts are standart
+	\setbeamercolor{footline}{fg=white}
+	\setbeamerfont{footline}{size=\small}
+	%style of other part of frame (background, headline) is empty
+	\usebackgroundtemplate{}
+	\setbeamertemplate{headline}{}
+	
+	
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%STYLE TWO
+\newcommand{\FrameStyleTwo}
+{
+	%frame title
+	\setbeamertemplate{frametitle}{
+		
+		\DisplayFrameTitle{maingreen}
+	}
+	%headline style
+	\setbeamertemplate{headline}{
+		\leavevmode%
+		
+		\setvalue{flag/property = 1}
+		\ColoredRectangle{maingreen}{maingreen}{\textwidth}{0.15cm}{[xshift=0, yshift=-1.3cm] current page.north}{below right =-0.28 cm and 0 cm of myrect.north west}{0.35cm}
+	}
+	%setups for footline fonts
+	%headline fonts are standart
+	\setbeamerfont{footline}{size=\small}
+	\setbeamercolor{footline}{fg=maingreen}
+	
+	
+	%style of other parts of frame (background, footline) is empty
+	\usebackgroundtemplate{}
+	
+	\setbeamertemplate{footline}{
+		\leavevmode%
+		
+		\FrameNumber{}
+	}
+	
+
+	
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%STYLE THREE
+\newcommand{\FrameStyleThree}
+{
+	%frame title
+	\setbeamertemplate{frametitle}{
+		
+		\DisplayFrameTitle{white}
+	}
+	%headline style
+	\setbeamertemplate{headline}{
+		\leavevmode%
+		\setvalue{flag/property = 1}
+		
+		\ColoredRectangle{black}{maingreen}{\textwidth}{1.5cm}{[xshift=0, yshift=-0.6cm] current page.north}{below right =-0.3 cm and 0 cm of myrect.south west}{0.35cm}
+		
+	}
+	%setups for footline fonts
+	%headline fonts are standart
+	\setbeamerfont{footline}{size=\small}
+	\setbeamercolor{footline}{fg=maingreen}
+	
+	
+	%style of other parts of frame (background, footline) is empty
+	\usebackgroundtemplate{}
+	\setbeamertemplate{footline}{
+		\leavevmode%
+		
+		\FrameNumber{}
+	}
+	
+	
+	
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%BACKGROUND FOR LAST FRAME
+\newcommand{\ThankYouFrame}{
+	
+	\usebackgroundtemplate{\includegraphics[width=\paperwidth, height=\paperheight]{./titlefigures/title_back_green.png}}
+	\setbeamertemplate{footline}{}
+	\setbeamertemplate{headline}{}
+	
+}
+
+\endinput

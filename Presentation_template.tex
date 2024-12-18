@@ -1,4 +1,5 @@
 %Copyright (c) 2024 VOLCHOK Evgeniia
+%for contacts e.p.volchok@gmail.com
 
 %Licensed under the Apache License, Version 2.0 (the "License");
 %you may not use this file except in compliance with the License.
@@ -41,17 +42,18 @@
 \title{Presentation template}
 \subtitle{Title page}
 
+%a list of authors
 \newcommand{\insertauthorslist}{
-{Speaker}, {authors}, {list}, {too  long} , {third aa} , {45345 aa}
-}
-	%сюда вводим списком аффиляции
+{Speaker}, {authors}, {list}, {too  long} , {third aa} , {45345 aa}}
+
+%a list of affiliations
 \newcommand{\insertsplitinstitutes}{
 {Scientific Institute 1}, {Scientific Institute 2}, {Scientific Institute 3}, {Scientific Institute 4}
 }
+
 \usepackage{enumitem}
 \setlist[itemize,1]{label=$\bullet$}
 
-%\renewcommand{labelitemii}{\textbullet}
 	
 \begin{document}
 	
@@ -72,12 +74,12 @@
 			\item Fonts can set by \mintinline{tex}{\setmainfont{fontname}}
 			\item Colours:
 		\end{itemize}
-			%\vspace{0.5cm}
+			
 			\centering
 			\begin{tabular}{ll}
-				Main blue & \textcolor{maingreen}{RGB: 0 85 34} \\
-				Light blue & \textcolor{lightgreen}{RGB: 44 160 44} \\
-				Purple for contrast & \textcolor{orangec}{RGB: 255 55 0} \\
+				Main green & \textcolor{maingreen}{RGB: 0 85 34} \\
+				Light green & \textcolor{lightgreen}{RGB: 44 160 44} \\
+				Purple for contrast & \textcolor{mypurple}{RGB: 255 55 0} \\
 			\end{tabular}
 			
 		\begin{itemize}
@@ -107,7 +109,7 @@
 {Speaker}, {authors}, {list}, {too  long} , {third aa} , {45345 aa}}
 		\end{minted}
 		separated by comas and curly brackets surrounding each one. If the number of authors is larger than 3, only first 3 of them will be displayed with others being replaced by \textcolor{maingreen}{\textit{et. al.}}
-		\item The same with affiliations
+		\item The same are with affiliations
 		\begin{minted}{tex}
 \newcommand{\insertsplitinstitutes}{
 {Scientific Institute 1}, {Scientific Institute 2},
@@ -126,18 +128,18 @@
 		Three styles for meaningful frames triggered by pre-frame commands
 		
 		\begin{itemize}
-			\item \mintinline{tex}{\framestyleone}
-			\item \mintinline{tex}{\framestyletwo}
-			\item \mintinline{tex}{\framestylethree} \\
+			\item \mintinline{tex}{\FrameStyleOne}
+			\item \mintinline{tex}{\FrameStyleTwo}
+			\item \mintinline{tex}{\FrameStyleThree} \\
 			\\
 			and \\
-			\item title page \mintinline{tex}{\firstframe}
-			\item final page \mintinline{tex}{\thankyouframe}
+			\item title page \mintinline{tex}{\FirstFrame}
+			\item final page \mintinline{tex}{\ThankYouFrame}
 		\end{itemize}
 		
 		\vspace{1cm}
 		
-		Background image and logos are in 'titlefigures' folder nested in 'figures' one.
+		
 		
 		\begin{tikzpicture}[remember picture, overlay]
 			
@@ -154,6 +156,55 @@
 		\end{tikzpicture}
 	\end{frame}
 	
+	\FrameStyleOne
+	\begin{frame}[fragile]
+	\frametitle{How to use the template: logos}
+
+	\begin{itemize}
+		\item Background images and logos are in 'titlefigures' folder nested in 'figures' one.
+		\item A logo in footlines and headlines can be set in Pstyle.sty in \mintinline{tex}{\ColoredRectangle} function. Settings of its location are in the function either.
+		\item To display a logo set \textit{flag} variable to 1 as
+		\begin{minted}{tex}
+\setvalue{flag/property = 1}
+		\end{minted}
+		Otherwise, if a logo is not required  \textit{flag} should be 0 as it set default. 
+		\item To change an image logo use command
+		\begin{minted}{tex}
+\includegraphics[height=#7]{./titlefigures/logo.png}
+		\end{minted}
+		\item A title logo look for in \mintinline{tex}{\setbeamertemplate{title page}}, a node with mark \textit{(titlegraphic)}.
+	\end{itemize}
+	
+	 
+	
+	
+	
+	
+	
+	\end{frame}
+	
+	\FrameStyleTwo
+	\begin{frame}[fragile]
+		\frametitle{How to use the template: logos}
+		\vspace{1cm}
+		
+		\begin{itemize}
+			\item A background image is set in title and final frames as
+			\begin{minted}{tex}
+\newcommand{\FirstFrame or \ThankYouFrame}{
+\usebackgroundtemplate{
+\includegraphics[width=\paperwidth,height=\paperheight]
+{./titlefigures/title_back_green.png}}}
+			\end{minted}
+			\item Such a wrapper can be added to any frame.
+			\item Images for the main part of a presentations are recommended to save in 'figures' directory.
+		\end{itemize}
+		
+		\begin{center}
+			\includegraphics[height=2.5cm]{DSCF3797_1.jpg}
+		\end{center}
+	\end{frame}
+		
 	\ThankYouFrame
 	\begin{frame}
 		\begin{tikzpicture}[remember picture, overlay]
@@ -171,7 +222,7 @@
 				\vspace{-0.5cm}
 				
 				\begin{center}
-					\includegraphics[width=3.cm]{./titlefigures/vibing_cat.pdf}
+					\href{https://www.youtube.com/watch?v=Fgb8l2Ve8vo&ab_channel=ProntoDundee}{\includegraphics[width=3.cm]{./titlefigures/vibing_cat.pdf}}
 				\end{center}
 			\end{minipage}
 			};

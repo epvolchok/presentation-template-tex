@@ -1,5 +1,6 @@
 \ProvidesPackage{Pstyle}
 %Copyright (c) 2024 VOLCHOK Evgeniia
+%for contacts e.p.volchok@gmail.com
 
 %Licensed under the Apache License, Version 2.0 (the "License");
 %you may not use this file except in compliance with the License.
@@ -18,14 +19,14 @@
 \definecolor{maingreen}{RGB}{0, 85, 34}
 \definecolor{lightblue}{RGB}{144, 180, 255}
 \definecolor{lightgreen}{RGB}{44, 160, 44}
-\definecolor{orangec}{RGB}{168, 12, 145}
+\definecolor{mypurple}{RGB}{168, 12, 145}
 
 \usepackage{pgfkeys}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %HELPFUL FUNCTIONS
-% a flag for displaying (or not) logo on a colored strip
+% a flag for displaying (or not) a logo on a colored strip
 \newcommand{\setvalue}[1]{\pgfkeys{/variables/#1}}
 \newcommand{\getvalue}[1]{\pgfkeysvalueof{/variables/#1}}
 \newcommand{\declare}[1]{%
@@ -38,15 +39,16 @@
 \declare{flag/}
 \setvalue{flag/property = 0}
 
-%colored strip in footline and headline
+%colored strip in footlines and headlines
 %arguments: 
 % #1 top color, #2 bottom color - to create a gradient
 % #3 width of the strip, #4 height of the strip
-% #5 - coordinates of lower left corner in the format [xshift=-0.03, yshift=0.17cm] current page.south
-% #6 a possition of a logo in the format 'below right =-0.4 cm and 0 cm of myrect.north west', necessary if flag/property=1
+% #5 - coordinates of lower left corner in the format: [xshift=-0.03, yshift=0.17cm] current page.south
+% #6 a possition of a logo in the format: below right =-0.4 cm and 0 cm of myrect.north west,
+% necessary if flag/property=1
 % #7 height of the logo
 
-\NewDocumentCommand{\ColoredRectangle}{m m m m m  g g} %mO{Flag}O{Image height}{
+\NewDocumentCommand{\ColoredRectangle}{m m m m m  g g}
 {	\begin{tikzpicture}[remember picture,overlay]
 	\node[draw, top color=#1,bottom color=#2,minimum width=#3, minimum height=#4] (myrect) at (#5) {};
 	%logo
@@ -64,8 +66,7 @@
 \NewDocumentCommand{\FrameNumber}{}
 {
 	\begin{tikzpicture}[remember picture,overlay]
-		%colored strip
-		
+	
 		%current frame number / total frame number
 		\node [above =-0.1 cm of current page.south east]
 		{
@@ -122,12 +123,12 @@
 				\newcounter{total} 
 				\setcounter{total}{0}
 				
-				\def\breakloop{\fi\iffalse}
 				
 				\foreach \author in \insertauthorslist
 				{
 					\addtocounter{total}{1}
 				}
+				
 				\foreach \author in \insertauthorslist{%
 						%increase couner
 						\addtocounter{authorcount}{1}%
@@ -138,7 +139,7 @@
 							\else
 							\textcolor{maingreen}{\,\Large\author,}%
 							\fi
-						%if total number > 3 print et al. after the third author
+						%if total number > 3 print only first three of them
 						\else
 							\def\author{}%
 						\fi
@@ -150,7 +151,8 @@
 				
 			\end{minipage}
 		};
-		%affilations
+		
+		%affiliations
 		\node [below= 0. cm of authors.south] (institute)
 		{
 			
@@ -175,6 +177,7 @@
 			\end{minipage}
 			
 		};
+		
 		%title figure with some logos, etc
 		\node [above=0.cm of current page.south] (titlegraphic)
 		{

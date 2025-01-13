@@ -1,0 +1,8 @@
+_minted/
+*.aux
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.gz
